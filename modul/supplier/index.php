@@ -2,12 +2,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Data Customer
+        Data Supplier
         <small>advanced tables</small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Customer</a></li>
+        <li><a href="#">Supplier</a></li>
         <li class="active">Data</li>
       </ol>
     </section>
@@ -29,8 +29,8 @@
                 <span id="message">None</span>
               </div>
               <div class="form-group">
-                <label for="nama_customer">Nama</label>
-                <input type="text" class="form-control" name="nama_customer" id="nama_customer" placeholder="Enter Nama">
+                <label for="nama_supplier">Nama</label>
+                <input type="text" class="form-control" name="nama_supplier" id="nama_supplier" placeholder="Enter Nama">
               </div>
               <div class="form-group">
                 <label for="email">Email address</label>
@@ -61,7 +61,7 @@
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Form Data Customer</h4>
+            <h4 class="modal-title">Form Edit Data Supplier</h4>
           </div>
           <div class="modal-body">
               <div class="alert alert-warning alert-dismissible">
@@ -69,9 +69,9 @@
                 <span id="message-update">None</span>
               </div>
               <div class="form-group">
-                <label for="e_nama_customer">Nama</label>
-                <input type="hidden" class="form-control" name="e_id_customer" id="e_id_customer" placeholder="Enter id">
-                <input type="text" class="form-control" name="e_nama_customer" id="e_nama_customer" placeholder="Enter Nama">
+                <label for="e_nama_supplier">Nama Supplier</label>
+                <input type="hidden" class="form-control" name="e_id_supplier" id="e_id_supplier" placeholder="Enter id">
+                <input type="text" class="form-control" name="e_nama_supplier" id="e_nama_supplier" placeholder="Enter Nama">
               </div>
               <div class="form-group">
                 <label for="e_email">Email address</label>
@@ -82,7 +82,7 @@
                 <textarea class="form-control" rows="3" name="e_alamat" id="e_alamat" placeholder="Enter ..."></textarea>
               </div>
               <div class="form-group">
-                <label for="no_hp">Nomor Telp</label>
+                <label for="e_no_hp">Nomor Telp</label>
                 <input type="text" class="form-control" id="e_no_hp" nama="e_no_hp" placeholder="Enter nomor telepon">
               </div>
           </div>
@@ -118,35 +118,35 @@
           <!-- /.box -->
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title">Data Customer</h3>
+              <h3 class="box-title">Data Supplier</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Id Customer</th>
-                  <th>Nama Customer</th>
+                  <th>Id Supplier</th>
+                  <th>Nama Supplier</th>
                   <th>Alamat</th>
+                  <th>Nomor Hp</th>
                   <th>Email</th>
-                  <th>Nomor HP</th>
                   <th>Aksi</th>
                 </tr>
                 </thead>
                 <tbody id="datatest">
                 <?php 
-                    $select = mysqli_query($conn, "select * from customer");
+                    $select = mysqli_query($conn, "select * from supplier");
                     while($data = mysqli_fetch_object($select)){
                       echo "<tr>".
-                            "<td>".$data->id_customer."</td>".
-                            "<td>".$data->nama_customer."</td>".
+                            "<td>".$data->id_supllier."</td>".
+                            "<td>".$data->nama_supplier."</td>".
                             "<td>".$data->alamat."</td>".
-                            "<td>".$data->email."</td>".
                             "<td>".$data->no_hp."</td>".
+                            "<td>".$data->email."</td>".
                             "<td>
                               <div class='btn-group'>
-                              <button type='button' class='btn btn-success btn-sm' onclick='editdata($data->id_customer)' data-toggle='modal' data-target='#modal-default1'><i class='fa fa-edit'></i></button>
-                              <button type='button' class='btn btn-danger btn-sm' onclick='deleteDataCustomer($data->id_customer)'><i class='fa fa-trash'></i></button>
+                              <button type='button' class='btn btn-success btn-sm' onclick='editdata($data->id_supplier)' data-toggle='modal' data-target='#modal-default1'><i class='fa fa-edit'></i></button>
+                              <button type='button' class='btn btn-danger btn-sm' onclick='deleteDataCustomer($data->id_supplier)'><i class='fa fa-trash'></i></button>
                               </div>
                             </td>".
                             "</tr>";
@@ -166,4 +166,37 @@
     <!-- /.content -->
   </div>
 
-  <script src="modul/script/customer-script.js"></script>
+<script>
+  let btnKirim = document.getElementById('buttonKirim');
+  let objsupplier = {
+      "id_supplier"   :"", 
+      "nama_supplier" :"",
+      "alamat"        :"",
+      "nohp"          :"",
+      "email"         :"",
+
+      "sendData": ()=>{
+         this.nama_supplier = document.getElementById("nama_supplier").value;
+         this.alamat        = document.getElementById("alamat").value;
+         this.nohp          = document.getElementById("no_hp").value;
+         this.email         = document.getElementById("email").value;
+
+         let xmlHttp = new XMLHttpRequest();
+         let url = "modul/supplier/create_process.php"; 
+         let param = "create=supplier" + "&namasupplier=" + this.nama_supplier + "&alamat=" + this.alamat + "&nohp=" + this.nohp + "&email=" + this.email;
+         xmlHttp.onreadystatechange = function() {
+           if(xmlHttp.readyState == 4)
+           {
+              let response = xmlHttp.responseText;
+              document.getElementById("message").innerHTML = response;
+           }
+         }
+
+         xmlHttp.open("POST", url, true);
+         xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+         xmlHttp.send(param);
+      },
+  }
+
+  btnKirim.addEventListener('click', objsupplier.sendData);
+</script>
