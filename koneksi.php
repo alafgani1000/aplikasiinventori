@@ -2,7 +2,7 @@
     $host   = "localhost";
     $user   = "root";
     $pass   = "";
-    $db     = "db_inventori";
+    $db     = "db_inventory";
     $conn   = mysqli_connect($host, $user, $pass, $db);
     if(!$conn)
     {

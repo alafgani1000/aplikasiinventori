@@ -21,7 +21,7 @@
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Form Data Customer</h4>
+            <h4 class="modal-title">Form Data Supplier</h4>
           </div>
           <div class="modal-body">
               <div class="alert alert-warning alert-dismissible">
@@ -145,8 +145,8 @@
                             "<td>".$data->email."</td>".
                             "<td>
                               <div class='btn-group'>
-                              <button type='button' class='btn btn-success btn-sm' onclick='editdata($data->id_supplier)' data-toggle='modal' data-target='#modal-default1'><i class='fa fa-edit'></i></button>
-                              <button type='button' class='btn btn-danger btn-sm' onclick='deleteDataCustomer($data->id_supplier)'><i class='fa fa-trash'></i></button>
+                              <button type='button' class='btn btn-success btn-sm' onclick='editdata($data->id_supllier)' data-toggle='modal' data-target='#modal-default1'><i class='fa fa-edit'></i></button>
+                              <button type='button' class='btn btn-danger btn-sm' onclick='deleteDataCustomer($data->id_supllier)'><i class='fa fa-trash'></i></button>
                               </div>
                             </td>".
                             "</tr>";
@@ -168,13 +168,41 @@
 
 <script>
   let btnKirim = document.getElementById('buttonKirim');
+  let btnRefresh = document.getElementById('btnRefresh');
   let objsupplier = {
       "id_supplier"   :"", 
       "nama_supplier" :"",
       "alamat"        :"",
       "nohp"          :"",
       "email"         :"",
-
+      "getData": ()=>{
+        let xmlHttp = new XMLHttpRequest();
+        let url = "modul/supplier/index_process.php";
+        xmlHttp.onreadystatechange = function() {
+        if(xmlHttp.readyState == 4) { 
+            let resJson = JSON.parse(xmlHttp.responseText);
+            let dataCustomer = "";
+            for(let dataJson = 0; dataJson < resJson.length; dataJson++)
+            {
+            dataCustomer += "<tr>"+
+                                    "<td>"+ resJson[dataJson].id_supllier +"</td>"+ 
+                                    "<td>"+ resJson[dataJson].nama_supplier +"</td>"+
+                                    "<td>"+ resJson[dataJson].alamat +"</td>"+
+                                    "<td>"+ resJson[dataJson].no_hp +"</td>"+
+                                    "<td>"+ resJson[dataJson].email +"</td>"+
+                                    "<td><div class='btn-group'>"+
+                                    "<button type='button' class='btn btn-success btn-sm' onclick='editdata("+ resJson[dataJson].id_supllier +")' data-toggle='modal' data-target='#modal-default1'><i class='fa fa-edit'></i></button>"+
+                                    "<button type='button' class='btn btn-danger btn-sm' onclick='deleteDataCustomer("+ resJson[dataJson].id_supllier +")'><i class='fa fa-trash'></i></button>"+
+                                    "</div></td>"+
+                                "</tr>";
+            }
+            
+            document.getElementById("datatest").innerHTML = dataCustomer;
+        }
+        }
+        xmlHttp.open("GET",url,true);
+        xmlHttp.send();
+      },
       "sendData": ()=>{
          this.nama_supplier = document.getElementById("nama_supplier").value;
          this.alamat        = document.getElementById("alamat").value;
@@ -195,8 +223,15 @@
          xmlHttp.open("POST", url, true);
          xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
          xmlHttp.send(param);
-      },
+      }
+      
   }
 
+  // kirim data and refreshdata
   btnKirim.addEventListener('click', objsupplier.sendData);
+  btnKirim.addEventListener('click', objsupplier.getData);
+
+  // refresh data dengan tombol refresh
+  
+  btnRefresh.addEventListener('click', objsupplier.getData);
 </script>
