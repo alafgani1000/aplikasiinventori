@@ -7,6 +7,7 @@ $select = mysqli_query($conn,
     "select * from customer"
 );
 
+$data = [];
 while($row = mysqli_fetch_object($select)){
     $data[] = $row;
 }

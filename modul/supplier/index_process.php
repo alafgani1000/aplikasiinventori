@@ -7,6 +7,7 @@ $select = mysqli_query($conn,
     "select * from supplier"
 );
 
+$data = [];
 while($row = mysqli_fetch_object($select)){
     $data[] = $row;
 }

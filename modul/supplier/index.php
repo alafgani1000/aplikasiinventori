@@ -88,7 +88,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-            <button type="button" id="updateCustomer" class="btn btn-primary">Update changes</button>
+            <button type="button" id="updateSupplier" class="btn btn-primary">Update changes</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -145,8 +145,8 @@
                             "<td>".$data->email."</td>".
                             "<td>
                               <div class='btn-group'>
-                              <button type='button' class='btn btn-success btn-sm' onclick='editdata($data->id_supllier)' data-toggle='modal' data-target='#modal-default1'><i class='fa fa-edit'></i></button>
-                              <button type='button' class='btn btn-danger btn-sm' onclick='deleteDataCustomer($data->id_supllier)'><i class='fa fa-trash'></i></button>
+                              <button type='button' class='btn btn-success btn-sm' onclick='objsupplier.editData($data->id_supllier)' data-toggle='modal' data-target='#modal-default1'><i class='fa fa-edit'></i></button>
+                              <button type='button' class='btn btn-danger btn-sm btnDelete' onclick='objsupplier.deleteData($data->id_supllier)'><i class='fa fa-trash'></i></button>
                               </div>
                             </td>".
                             "</tr>";
@@ -169,6 +169,7 @@
 <script>
   let btnKirim = document.getElementById('buttonKirim');
   let btnRefresh = document.getElementById('btnRefresh');
+  let updateSupplier = document.getElementById('updateSupplier');
   let objsupplier = {
       "id_supplier"   :"", 
       "nama_supplier" :"",
@@ -191,8 +192,8 @@
                                     "<td>"+ resJson[dataJson].no_hp +"</td>"+
                                     "<td>"+ resJson[dataJson].email +"</td>"+
                                     "<td><div class='btn-group'>"+
-                                    "<button type='button' class='btn btn-success btn-sm' onclick='editdata("+ resJson[dataJson].id_supllier +")' data-toggle='modal' data-target='#modal-default1'><i class='fa fa-edit'></i></button>"+
-                                    "<button type='button' class='btn btn-danger btn-sm' onclick='deleteDataCustomer("+ resJson[dataJson].id_supllier +")'><i class='fa fa-trash'></i></button>"+
+                                    "<button type='button' class='btn btn-success btn-sm' onclick='objsupplier.editData("+ resJson[dataJson].id_supllier +")' data-toggle='modal' data-target='#modal-default1'><i class='fa fa-edit'></i></button>"+
+                                    "<button type='button' class='btn btn-danger btn-sm btnDelete' onclick='objsupplier.deleteData("+ resJson[dataJson].id_supllier +")'><i class='fa fa-trash'></i></button>"+
                                     "</div></td>"+
                                 "</tr>";
             }
@@ -223,6 +224,67 @@
          xmlHttp.open("POST", url, true);
          xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
          xmlHttp.send(param);
+      },
+      "deleteData": (id)=>{
+        let xmlHttp = new XMLHttpRequest();
+        let supplier = "supplier";
+        let url = "modul/supplier/delete_process.php";
+        let param = "delete=" + supplier + "&id=" + id;
+
+        xmlHttp.onreadystatechange = function()
+        {
+          let res = xmlHttp.responseText;
+          document.getElementById("message-delete").innerHTML = "<div class='alert alert-warning alert-dismissible'>"+
+              "<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>"+
+              "<span >"+ res +"</span>"+
+          "</div>"; 
+        }
+
+        objsupplier.getData();
+
+        xmlHttp.open("POST",url, true);
+        xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlHttp.send(param);
+      },
+      "editData": (id)=>{
+        let xmlHttp = new XMLHttpRequest();
+        let url = "modul/supplier/edit_process.php?op=getdata&id=" + id;
+        xmlHttp.onreadystatechange = function() 
+        {
+        if(xmlHttp.readyState == 4)
+        {
+            let res = xmlHttp.responseText;
+            let resJson = JSON.parse(res);
+            document.getElementById("e_nama_supplier").value = resJson.nama_supplier;
+            document.getElementById("e_email").value = resJson.email;
+            document.getElementById("e_alamat").value = resJson.alamat;
+            document.getElementById("e_no_hp").value = resJson.no_hp;
+            document.getElementById("e_id_supplier").value = resJson.id_supllier;
+        }
+        }
+        xmlHttp.open("GET",url,true);
+        xmlHttp.send(null);
+      },
+      "updateData": ()=>{
+        this.id_supplier = document.getElementById("e_id_supplier").value;
+        this.nama_supplier = document.getElementById("e_nama_supplier").value;
+        this.email = document.getElementById("e_email").value;
+        this.alamat = document.getElementById("e_alamat").value;
+        this.nohp = document.getElementById("e_no_hp").value;
+        let supplier = "supplier";
+        let xmlHttp = new XMLHttpRequest();
+        let url = "modul/supplier/update_process.php";
+        let param = "create=" + supplier + "&namaSupplier=" +  this.nama_supplier + "&email=" + this.email + "&alamat=" + this.alamat + "&noHp=" + this.nohp + "&id=" + this.id_supplier ;
+
+        xmlHttp.onreadystatechange = function() 
+        {
+        let res = xmlHttp.responseText;
+        document.getElementById("message-update").innerHTML = res;
+        getDataCustomer(); 
+        }
+        xmlHttp.open("POST",url,true);
+        xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlHttp.send(param);
       }
       
   }
@@ -231,7 +293,10 @@
   btnKirim.addEventListener('click', objsupplier.sendData);
   btnKirim.addEventListener('click', objsupplier.getData);
 
-  // refresh data dengan tombol refresh
-  
+  // refresh data dengan tombol refresh  
   btnRefresh.addEventListener('click', objsupplier.getData);
+
+  updateSupplier.addEventListener('click', objsupplier.updateData);
+  updateSupplier.addEventListener('click', objsupplier.getData);
+
 </script>
